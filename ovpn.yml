@@ -1,0 +1,27 @@
+version: '3.6'
+services:
+    sades_openvpn_server:
+        image: openvpn_server:1.0
+        container_name: openvpn_server_1_0
+        cap_add:
+            - NET_ADMIN
+        restart: unless-stopped
+        #command: ping 8.8.8.8 # debug/testing
+        environment:
+            - CONFIG_FILE=test.conf
+        volumes:
+            - /path/to/test.conf/:/data
+        ports:
+            - 7000/udp
+        networks:
+            ovpn_bridge:
+              ipv4_address: 195.195.195.100
+networks:
+  ovpn_bridge:
+    name: docker2
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 195.195.195.0/16
+    driver_opts:
+      com.docker.network.bridge.name: docker2
