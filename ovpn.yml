@@ -1,27 +1,36 @@
 version: '3.6'
 services:
-    sades_openvpn_server:
-        image: openvpn_server:1.0
-        container_name: openvpn_server_1_0
+    onvpn2:
+        image: ovpn:2.0
+        container_name: ovpn_2_0
         cap_add:
             - NET_ADMIN
         restart: unless-stopped
-        #command: ping 8.8.8.8 # debug/testing
         environment:
-            - CONFIG_FILE=test.conf
+            - CUSTOM_CFG=no #Mandatory yes|no
+            - CONFIG_FILE=test.conf #Mandatory if custom_cfg=yes
+            - REMOTE_IP=1.1.1.1 #from here, mandatory if custom_cfg=no
+            - FLOAT=no #yes|no
+            - PORT=9001
+            - TUN_LOCAL_IP=10.9.9.1
+            - TUN_REMOTE_IP=10.9.9.2
+            - KEY=key_test.key
+            - ROUTES=route 192.168.111.0 255.255.255.0
+            - LOG_NAME=prueba.log
+            - CONFIG_NAME=prueba
         volumes:
-            - /path/to/test.conf/:/data
+            - /opt/docker_data/ovpn:/data
         ports:
-            - 7000/udp
+            - 9001/udp
         networks:
             ovpn_bridge:
-              ipv4_address: 195.195.195.100
+              ipv4_address: 192.0.0.101
 networks:
   ovpn_bridge:
     name: docker2
     driver: bridge
     ipam:
       config:
-        - subnet: 195.195.195.0/16
+        - subnet: 192.0.0.0/24
     driver_opts:
       com.docker.network.bridge.name: docker2
