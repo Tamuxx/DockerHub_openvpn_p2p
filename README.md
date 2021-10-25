@@ -5,11 +5,12 @@ This docker image is an alpine linux container with openvpn point to point.
 El contenedor tiene dos modos, mediante los parámetros del yml podemos optar por utilizar una configuración personalizada o una configuración que se auto-genera.
 
 ## Parámetros:
- - CUSTOM_CFG (Obligatorio, setear yes|no, **yes:** se utilizará una configuración personalizada, **no:** se utilizará una configuración auto-generada.)
 
-- CONFIG_FILE (Obligatorio si CUSTOM_CFG=yes, Se debe especidifcar el nombre de la configuración personalizada que luego será montada desde el volumen /data)
+- CUSTOM_CFG (Obligatorio, setear yes|no, **yes:** se utilizará una configuración personalizada, **no:** se utilizará una configuración auto-generada.)
 
-Las siguientes variables de entorno son obligatorias si custom_cfg=no
+- CONFIG_FILE (Obligatorio si CUSTOM_CFG=yes, Se debe especificar el nombre de la configuración personalizada que luego será montada desde el volumen /data)
+
+**Las siguientes variables de entorno son obligatorias si custom_cfg=no**
 
 - REMOTE_IP (IP pública o dirección url del nodo remoto)
 
@@ -31,9 +32,17 @@ Las siguientes variables de entorno son obligatorias si custom_cfg=no
 
 
 ## Modo de uso:
-Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada extremo.
+Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada extremo, asumimos que utilizamos una configuración auto-generada, ambos equipos tienen docker y docker-compose instalado y tienen habilitado el IP_Fordwarding. Además, desde el Gateway está configurado el DNAT del puerto UDP utilizado.
+
+|#| IP |GATEWAY|IP PUBLICA|
+|--|--|--|-|
+|Nodo1|192.168.10.100|192.168.10.1|xx.xx.xx.125|
+|Nodo2|192.168.20.100|192.168.20.1|xx.xx.xx.140|
+
+
 
 ### Nodo 1
+
 
 
 
@@ -42,3 +51,4 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
 If you need generate a key, you can run: 
 $ docker exec [container_name] /usr/sbin/openvpn --genkey secret /data/key_test.key
 testear net_cap, tal vez es privilegio suficiente
+
