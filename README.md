@@ -39,7 +39,7 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
 |Nodo 1|192.168.10.100|10.0.0.1|192.168.10.1|xx.xx.xx.125|
 |Nodo 2|192.168.20.100|10.0.0.2|192.168.20.1|xx.xx.xx.140|
 
-### Nodo 1
+### Nodo 1, archivo nodo1.yml
      version: '3.5'
      services:
          openvpn:
@@ -62,6 +62,8 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
              volumes:
                  - /directory/to/mount:/data
              network_mode: host
+
+# docker-compose -f nodo1.yml up -d
 
 
 
