@@ -40,28 +40,28 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
 |Nodo 2|192.168.20.100|10.0.0.2|192.168.20.1|xx.xx.xx.140|
 
 ### Nodo 1
-     version: '3.6'
+     version: '3.5'
      services:
-     onvpn2:
-     image: ovpn:2.0
-     container_name: ovpn_2_0
-     cap_add:
-     - NET_ADMIN
-     restart: unless-stopped
-     environment:
-    - CUSTOM_CFG=no #Mandatory yes|no
-    - CONFIG_FILE=test.conf #Mandatory if custom_cfg=yes
-    - REMOTE_IP=1.1.1.1 #from here, mandatory if custom_cfg=no
-    - FLOAT=no #yes|no
-    - PORT=9001
-    - TUN_LOCAL_IP=10.9.9.1
-    - TUN_REMOTE_IP=10.9.9.2
-    - KEY=key_test.key
-    - ROUTES=route 192.168.111.0 255.255.255.0
-    - LOG_NAME=prueba.log
-    - CONFIG_NAME=prueba
-    volumes:
-    - /opt/docker_data/ovpn:/data
+         openvpn:
+             image: tamuxx/openvpn_p2p
+             container_name: ovpn_p2p
+             cap_add:
+                 - NET_ADMIN
+             restart: unless-stopped
+             environment:
+                 - CUSTOM_CFG=no                 
+                 - REMOTE_IP=xx.xx.xx.140 
+                 - FLOAT=no 
+                 - PORT=1200
+                 - TUN_LOCAL_IP=10.0.0.1
+                 - TUN_REMOTE_IP=10.0.0.2
+                 - KEY=key_test.key #llave previamente generada en el directorio "/directory/to/mount".
+                 - ROUTES=route 192.168.20.0 255.255.255.0 #ruteo a la red privada remota.
+                 - LOG_NAME=ovpn_nodo1.log
+                 - CONFIG_NAME=ovpn_nodo1
+             volumes:
+                 - /directory/to/mount:/data
+             network_mode: host
 
 
 
