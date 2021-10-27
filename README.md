@@ -1,6 +1,10 @@
-# Under development
+# En Desarrollo / Under development
 
-This docker image is an alpine linux container with openvpn point to point.
+[Guidelines for this project in English](docs/README_en.md)
+
+Esta imagen de docker es un contenedor alpine linux con openvpn punto a punto.
+
+## Guía del proyecto:
 
 El contenedor tiene dos modos, mediante los parámetros del yml podemos optar por utilizar una configuración personalizada o una configuración que se auto-genera.
 
