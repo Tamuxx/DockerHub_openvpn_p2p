@@ -28,15 +28,14 @@ El contenedor tiene dos modos, mediante los parámetros del yml podemos optar po
 
 - KEY (Nombre del archivo que contiene la llave de la VPN)
 
-- ROUTES ( Ruta hacia la red privada remota, ej: route 192.168.111.0 255.255.255.0)
+- ROUTES (Ruta hacia la red privada remota, ej: route 192.168.111.0 255.255.255.0)
 
 - LOG_NAME (Nombre del archivo donde se escriben los logs del openvpn)
 
 - CONFIG_NAME (Nombre que recibirá el archivo de configuración)
 
-
 ## Modo de uso:
-Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada extremo, asumimos que utilizamos una configuración auto-generada, ambos equipos tienen docker y docker-compose instalado y tienen habilitado el IP_Fordwarding. Además, desde el Gateway está configurado el DNAT del puerto UDP utilizado así como todas las reglas de Firewall definidas.
+Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada extremo, asumimos que utilizamos una configuración auto-generada, ambos equipos tienen docker y docker-compose instalado y tienen habilitado el IP_Fordwarding. Además, desde el Gateway está configurado el DNAT del puerto UDP utilizado, así como todas las reglas de Firewall definidas.
 
 |#| IP |Tunel IP|GATEWAY|IP PUBLICA|
 |--|--|--|--|--|
@@ -53,7 +52,7 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
                  - NET_ADMIN
              restart: unless-stopped
              environment:
-                 - CUSTOM_CFG=no                 
+                 - CUSTOM_CFG=no           
                  - REMOTE_IP=xx.xx.xx.140 
                  - FLOAT=no 
                  - PORT=1200
@@ -67,7 +66,36 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
                  - /directory/to/mount:/data
              network_mode: host
 
-# docker-compose -f nodo1.yml up -d
+     # docker-compose -f nodo1.yml up -d
+
+### Nodo 2, archivo nodo2.yml
+     version: '3.5'
+     services:
+         openvpn:
+             image: tamuxx/openvpn_p2p
+             container_name: ovpn_p2p
+             cap_add:
+                 - NET_ADMIN
+             restart: unless-stopped
+             environment:
+                 - CUSTOM_CFG=no           
+                 - REMOTE_IP=xx.xx.xx.140 
+                 - FLOAT=no 
+                 - PORT=1200
+                 - TUN_LOCAL_IP=10.0.0.2
+                 - TUN_REMOTE_IP=10.0.0.1
+                 - KEY=key_test.key #llave copiada en el directorio "/directory/to/mount" desde el nodo1
+                 - ROUTES=route 192.168.10.0 255.255.255.0 #ruteo a la red privada remota.
+                 - LOG_NAME=ovpn_nodo2.log
+                 - CONFIG_NAME=ovpn_nodo2
+             volumes:
+                 - /directory/to/mount:/data
+             network_mode: host
+
+     # docker-compose -f nodo2.yml up -d
+
+
+
 
 
 
