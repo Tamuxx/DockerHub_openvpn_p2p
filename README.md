@@ -35,7 +35,12 @@ El contenedor tiene dos modos, mediante los parámetros del yml podemos optar po
 - CONFIG_NAME (Nombre que recibirá el archivo de configuración)
 
 ## Modo de uso:
-Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada extremo, asumimos que utilizamos una configuración auto-generada, ambos equipos tienen docker y docker-compose instalado y tienen habilitado el IP_Fordwarding. Además, desde el Gateway está configurado el DNAT del puerto UDP utilizado, así como todas las reglas de Firewall definidas.
+Paso 1. Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada extremo, asumimos que utilizamos una configuración auto-generada, ambos equipos tienen docker instalado y tienen habilitado el IP_Fordwarding. Además, desde el Gateway está configurado el DNAT del puerto UDP utilizado, así como todas las reglas de Firewall definidas.
+
+Paso 2. Si no disponemos de una llave, generar una nueva corriendo el siguiente comando en un contenedor ya generado:
+> docker exec [container_name] /usr/sbin/openvpn --genkey secret /data/key_test.key
+
+Paso 3. Preparar y correr los contenedores en cada extremo:
 
 |#| IP |Tunel IP|GATEWAY|IP PUBLICA|
 |--|--|--|--|--|
@@ -66,7 +71,9 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
                  - /directory/to/mount:/data
              network_mode: host
 
-     # docker-compose -f nodo1.yml up -d
+> El gateway 192.168.10.1 tiene un NAT del UDP 1200 al 192.168.10.100
+> Iniciar el contenedor:
+> docker-compose -f nodo1.yml up -d
 
 ### Nodo 2, archivo nodo2.yml
      version: '3.5'
@@ -92,13 +99,13 @@ Para establecer la vpn entre dos nodos, debemos montar un contenedor en cada ext
                  - /directory/to/mount:/data
              network_mode: host
 
-     # docker-compose -f nodo2.yml up -d
+> El gateway 192.168.20.1 tiene un NAT del UDP 1200 al 192.168.20.100
+> Iniciar el contenedor:
+> docker-compose -f nodo2.yml up -d
 
+Listo!, ambas redes privadas quedan enlazadas a travez del túnel. 
 
-
-
-
-
+En éste ejemplo, utilizamos el modo host, pero también se podría utilizar en modo bridge asignando una ip estática al contenedor y creando los ruteos necesarios.
 
 
 ## Tareas pendientes para testear y documentar:
